@@ -1,0 +1,39 @@
+version 3.8
+
+services:
+  gitlab:
+    restart: always
+    image: gitlab/gitlab-ce
+    hostname: gitlab
+    volumes:
+      - gitlab-config:/etc/gitlab
+      - gitlab-data:/var/apt/gitlab
+    ports:
+      - "80:80"
+    environment:
+      - GITLAB_ROOT_PASSWORD=C1sco12345
+      - GITLAB_SHARED_RUNNERS_REGISTRATION_TOKEN=twitchrunners
+      - GITLAB_HOST=http://devbox
+      - VIRTUAL_HOST=devbox
+  runner1:
+    restart: always
+    image: gitlab/gitlab-runner
+    environment:
+      - REGISTRATION_TOKEN=twitchrunners
+      - RUNNER_NAME=runner1
+      - RUNNER_EXECUTOR=docker
+      - CI_SERVER_URL=http://devbox
+      - CLONE_URL=http://devbox
+      - REGISTER_NON_INTERACTIVE=true
+      - DOCKER_IMAGE=alpine
+      - DOCKER_EXTRA_HOSTS=devbox:10.211.55.7
+      - DOCKER_PULL_POLICY=if-not-present
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    extra_hosts:
+      - "devbox:10.211.55.7"
+volumes:
+  gitlab-config:
+    driver: local
+  gitlab-data:
+    driver: local
