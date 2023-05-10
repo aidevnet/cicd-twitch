@@ -1,0 +1,10 @@
+ Container create_env-runner1-1  Creating
+ Container create_env-gitlab-1  Creating
+ Container create_env-runner1-1  Created
+ Container create_env-gitlab-1  Created
+ Container create_env-gitlab-1  Starting
+ Container create_env-runner1-1  Starting
+ Container create_env-runner1-1  Started
+ Container create_env-gitlab-1  Started
+[2023-04-27T17:23:41+00:00] INFO: Started Cinc Zero at chefzero://localhost:1 with repository at /opt/gitlab/embedded (One version per cookbook)
+[2023-04-27T17:23:41+00:00] WARN: Cinc Client 27 is running, will wait for it to finish and then run.

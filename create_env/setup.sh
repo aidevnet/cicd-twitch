@@ -20,7 +20,7 @@ success
 
 printf "Waiting for GitLab CE to become available..."
 
-until $(curl --output /dev/null --silent --head --fail ${$gitlab_host}); do
+until $(curl --output /dev/null --silent --head --fail ${gitlab_host}); do
 	printf '.'
 	sleep 10
 done
