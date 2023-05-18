@@ -1,0 +1,21 @@
+---
+ospf_process_id: 1
+router_id: 192.168.0.2
+
+configure_ospf:
+    - nxos_ospf_interface: loopback0
+      nxos_ospf_number: 1
+      nxos_ospf_area: 0.0.0.0
+      nxos_ip: 192.168.0.2/32
+    - nxos_ospf_interface: Ethernet1/3
+      nxos_ospf_number: 1
+      nxos_ospf_area: 0.0.0.0
+      nxos_ip: 172.16.252.9/30
+    - nxos_ospf_interface: Ethernet1/4
+      nxos_ospf_number: 1
+      nxos_ospf_area: 0.0.0.0
+      nxos_ip: 172.16.252.13/30
+    - nxos_ospf_interface: vlan106
+      nxos_ospf_number: 1
+      nxos_ospf_area: 0.0.0.0
+      nxos_ip: 172.16.106.3/24
