@@ -1,0 +1,89 @@
+vars:
+  device1: dist-sw01
+  device2: dist-sw02
+
+Post_Snapshot:
+  groups: ["nxos"]
+  source:
+    pkg: genie.libs.sdk
+    class: triggers.blitz.blitz.Blitz
+  test_sections:
+    - verify_ospf_neighborship:
+      - parallel:
+        - parse:
+          device: "%{vars.device1}"
+          command: show ip ospf neighbors detail
+          include:
+            - contains_key_value("neighbors", "172.16.252.25")
+            - contains_key_value("neighbors", "172.16.252.33")
+        - parse:
+          device: "%{vars.device2}"
+          command: show ip ospf neighbors detail
+          include:
+            - contains_key_value("neighbors", "172.16.252.25")
+            - contains_key_value("neighbors", "172.16.252.33")
+    - verify_advertised_ospf_routes:
+      - parallel:
+        - parse:
+          device: "%{vars.device1}"
+          command: show ip route
+          include:
+            - contains_key_value("routes", "192.168.0.2/32").contains_key_value("source_protocol", "ospf")
+        - parse:
+          device: "%{vars.device2}"
+          command: show ip route
+          include:
+            - contains_key_value("routes", "192.168.0.1/32").contains_key_value("source_protocol", "ospf")
+    - post_snapshot_ospf:
+      - loop:
+        loop_variable_name: feature
+        value:
+          - ospf
+        actions:
+          - parallel:
+            - learn:
+              device: "%{vars.device1}"
+              feature: "%VARIABLES{feature}"
+              save:
+                - variable_name: "post_%VARIABLES{feature}_%{vars.device1}"
+            - learn:
+              device: "%{vars.device2}"
+              feature: "%VARIABLES{feature}"
+              save:
+                - variable_name: "post_%VARIABLES{feature}_%{vars.device2}"
+          - parallel:
+            - api:
+              device: uut
+              function: save_dict_to_json_file
+              arguments:
+                data:
+                  - "%VARIABLES{post_ospf_%{vars_device1}}"
+                filename: "post_snapshots/post_%VARIABLES{feature}_%{vars.device1}.json"
+            - api:
+              device: uut
+              function: save_dict_to_json_file
+              arguments:
+                data:
+                  - "%VARIABLES{post_ospf_%{vars_device2}}"
+                filename: "post_snapshots/post_%VARIABLES{feature}_%{vars.device2}.json"
+    - load_snapshots_for_both_pre_and_post:
+      - loop:
+        loop_variable_name: device
+        value:
+          - "%{vars.device1}"
+          - "%{vars.device2}"
+        actions:
+          - api:
+            device: "%VARIABLES{device}"
+            function: load_dict_from_json_file
+            arguments:
+              filename: "pre_snapshots/pre_ospf_%VARIABLES{device}.json"
+            save:
+              - variable_name: "pre_ospf_%VARIABLES{device}"
+          - api:
+            device: "%VARIABLES{device}"
+            function: load_dict_from_json_file
+            arguments:
+              filename: "post_snapshots/post_ospf_%VARIABLES{device}.json"
+            save:
+              - variable_name: "post_ospf_%VARIABLES{device}"

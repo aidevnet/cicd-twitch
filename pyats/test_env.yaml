@@ -1,0 +1,46 @@
+testbed:
+  name: test_env
+  credentials:
+    default:
+      username: cisco
+      password: cisco
+devices:
+  dist-rtr01:
+    os: iosxe
+    connections:
+      defaults:
+        via: telnet
+      telnet:
+        ip: 10.10.10.175
+        port: 23
+        protocol: telnet
+  dist-rtr02:
+    os: iosxe
+    connections:
+      defaults:
+        via: telnet
+      telnet:
+        ip: 10.10.10.176
+        port: 23
+        protocol: telnet
+  dist-sw01:
+    alias: uut
+    os: nxos
+    type: nxos
+    connections:
+      defaults:
+        via: ssh
+      ssh:
+        ip: 10.10.10.177
+        port: 22
+        protocol: ssh
+  dist-sw02:
+    os: nxos
+    type: nxos
+    connections:
+      defaults:
+        via: ssh
+      ssh:
+        ip: 10.10.10.178
+        port: 22
+        protocol: ssh  
