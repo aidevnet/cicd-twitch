@@ -1,0 +1,38 @@
+default:
+  before_script:
+    - export: ANSIBLE_HOST_KEY_CHECKING=False
+
+image: 'adrianii/cicd-en:0.1.0'
+
+stages:
+  - pyats-pre-snapshot
+  - deploy-OSPF
+  - pyats-post-snapshot
+
+pyats-pre-snapshot:
+  stage: pyats-pre-snapshot
+  script: cd pyats && pyats run job job.py --testbed-file test_env.yaml --trigger-datafile pre_trigger_datafile.yml --html-logs pre_snapshots
+  artifacts:
+    paths:
+      - pyats/pre_snapshots/pre_ospf_dist-sw01.json
+      - pyats/pre_snapshots/pre_ospf_dist-sw02.json
+    when: always
+
+deploy-OSPF:
+  stage: deploy-OSPF
+  script: ansible-playbook -i hosts actions/configure-ospf/configure-ospf.yml
+
+pyats-post-snapshot:
+  stage: pyats-post-snapshot
+  script: 
+    - cd pyats && pyats run job.py --testbed-file test_env.yaml --trigger-datafile post_trigger_datafile.yaml --html-logs post_snapshots
+    - pyats diff pre_snapshots/pre_ospf_dist-sw01.json post_snapshots/post_ospf_dist-sw01.json --output ospfdiff/
+    - pyats diff pre_snapshots/pre_ospf_dist-sw02.json post_snapshots/post_ospf_dist-sw02.json --output ospfdiff/
+    - cat ospfdiff/diff_pre_ospf_dist-sw01.json
+    - cat ospfdiff/diff_pre_ospf_dist-sw02.json
+  
+  artifacts:
+    paths:
+      - pyats/ospfdiff/diff_pre_ospf_dist-sw01.json
+      - pyats/ospfdiff/diff_pre_ospf_dist-sw02.json
+    when: always
