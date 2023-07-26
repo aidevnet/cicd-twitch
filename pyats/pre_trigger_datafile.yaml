@@ -11,53 +11,53 @@ Pre_Snapshot:
     - verify_ospf_neighborships:
       - parallel:
         - parse:
-          device: "%{vars.device1}"
-          command: show ip ospf neighbors detail
-          include:
-            - contains_key_value("neighbors", "172.16.252.25")
-            - contains_key_value("neighbors", "172.16.252.33")
+            device: "%{vars.device1}"
+            command: show ip ospf neighbors detail
+            include:
+              - contains_key_value("neighbors", "172.16.252.25")
+              - contains_key_value("neighbors", "172.16.252.33")
         - parse:
-          device: "%{vars.device2}"
-          command: show ip ospf neighbors detail
-          include:
-            - contains_key_value("neighbors", "172.16.252.25")
-            - contains_key_value("neighbors", "172.16.252.33")
+            device: "%{vars.device2}"
+            command: show ip ospf neighbors detail
+            include:
+              - contains_key_value("neighbors", "172.16.252.25")
+              - contains_key_value("neighbors", "172.16.252.33")
     - verify_advertised_ospf_routes:
       - parallel:
         - parse:
-          device: "%{vars.device1}"
-          command: show ip route
-          include:
-            - contains_key_value("routes", "192.168.0.2/32").contains_key_value("source_protocol", "ospf")
+            device: "%{vars.device1}"
+            command: show ip route
+            include:
+              - contains_key_value("routes", "192.168.0.2/32").contains_key_value("source_protocol", "ospf")
         - parse:
-          device: "%{vars.device2}"
-          command: show ip route
-          include:
-            - contains_key_value("routes", "192.168.0.1/32").contains_key_value("source_protocol", "ospf")
+            device: "%{vars.device2}"
+            command: show ip route
+            include:
+              - contains_key_value("routes", "192.168.0.1/32").contains_key_value("source_protocol", "ospf")
     - pre_snapshot_ospf:
       - parallel:
         - learn:
-          device: "%{vars.device1}"
-          feature: ospf
-          save:
-            - variable_name: "pre_ospf_%{vars.device1}"
+            device: "%{vars.device1}"
+            feature: ospf
+            save:
+              - variable_name: "pre_ospf_%{vars.device1}"
         - learn:
-          device: "%{vars.device2}"
-          feature: ospf
-          save:
-            - variable_name: "pre_ospf_%{vars.device2}"
+            device: "%{vars.device2}"
+            feature: ospf
+            save:
+              - variable_name: "pre_ospf_%{vars.device2}"
       - parallel:
         - api:
-          device: uut
-          function: save_dict_to_json_file
-          arguments:
-            data:
-              - "%VARIABLES{pre_ospf_%{vars.device1}}"
-            filename: "pre_snapshots/pre_ospf_%{vars.device1}.json"
+            device: uut
+            function: save_dict_to_json_file
+            arguments:
+              data:
+                - "%VARIABLES{pre_ospf_%{vars.device1}}"
+              filename: "pre_snapshots/pre_ospf_%{vars.device1}.json"
         - api:
-          device: uut
-          function: save_dict_to_json_file
-          arguments:
-            data:
-              - "%VARIABLES{pre_ospf_%{vars.device2}}"
-            filename: "pre_snapshots/pre_ospf_%{vars.device2}.json"
+            device: uut
+            function: save_dict_to_json_file
+            arguments:
+              data:
+                - "%VARIABLES{pre_ospf_%{vars.device2}}"
+              filename: "pre_snapshots/pre_ospf_%{vars.device2}.json"

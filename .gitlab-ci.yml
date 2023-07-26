@@ -1,6 +1,6 @@
 default:
   before_script:
-    - export: ANSIBLE_HOST_KEY_CHECKING=False
+    - export ANSIBLE_HOST_KEY_CHECKING=False
 
 image: 'adrianii/cicd-en:0.1.0'
 
@@ -11,7 +11,7 @@ stages:
 
 pyats-pre-snapshot:
   stage: pyats-pre-snapshot
-  script: cd pyats && pyats run job job.py --testbed-file test_env.yaml --trigger-datafile pre_trigger_datafile.yml --html-logs pre_snapshots
+  script: cd pyats && pyats run job job.py --testbed-file test_env.yaml --trigger-datafile pre_trigger_datafile.yaml --html-logs pre_snapshots
   artifacts:
     paths:
       - pyats/pre_snapshots/pre_ospf_dist-sw01.json

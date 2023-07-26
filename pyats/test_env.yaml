@@ -7,6 +7,7 @@ testbed:
 devices:
   dist-rtr01:
     os: iosxe
+    type: iosxe
     connections:
       defaults:
         via: telnet
@@ -16,6 +17,7 @@ devices:
         protocol: telnet
   dist-rtr02:
     os: iosxe
+    type: iosxe
     connections:
       defaults:
         via: telnet

@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
 
-gitlab_host="http://devbox"
+gitlab_host="http://10.211.55.7"
 gitlab_user="root"
 gitlab_password="C1sco12345"
 
 #Create gitlab personal access token
 create_gitlab_token () {
 	# curl for the login page to get a session cookie
-	body_header=$(curl -c /tmp/cookies.txt -i "${gitlab_host/users/sign_in}" -s)
+	body_header=$(curl -c /tmp/cookies.txt -i "${gitlab_host}/users/sign_in" -s)
 	# grep the auth token for the user
 	csrf_token=$(echo $body_header | perl -ne 'print "$1\n" if /new_user.*?authenticity_token"[[:blank]]value=".+?"/' | sed -n 1p)
 
